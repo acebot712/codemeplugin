@@ -7,9 +7,11 @@
     "url": "https://github.com/acebot712/codemeplugin.git"
   },
   "version": "0.0.1",
+  "publisher": "CodeMe",
   "engines": {
     "vscode": "^1.77.0"
   },
+  "license": "MIT",
   "categories": [
     "Other"
   ],
