@@ -2,6 +2,10 @@
   "name": "codeme",
   "displayName": "CodeMe",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/acebot712/codemeplugin.git"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.77.0"
