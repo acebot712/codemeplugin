@@ -31,8 +31,8 @@ export function activate(context: vscode.ExtensionContext) {
 	function createChatbotView() {
 		// Create a webview panel to show the chatbot view
 		const panel = vscode.window.createWebviewPanel(
-			'exampleWebview', // Identifies the type of the webview. Used internally
-			'Example Webview', // Title of the panel displayed to the user
+			'codemeWebview', // Identifies the type of the webview. Used internally
+			'CodeMe', // Title of the panel displayed to the user
 			vscode.ViewColumn.One, // Editor column to show the new webview panel in.
 			{
 				enableScripts: true,
@@ -58,7 +58,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Register a command to create the chatbot view
 	context.subscriptions.push(
-		vscode.commands.registerCommand('extension.exampleWebview', () => {
+		vscode.commands.registerCommand('extension.codemeWebview', () => {
 			createChatbotView();
 		})
 	);

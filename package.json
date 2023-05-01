@@ -2,6 +2,7 @@
   "name": "codeme",
   "displayName": "CodeMe",
   "description": "",
+  "icon": "./images/CodeMeLogo.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/acebot712/codemeplugin.git"
@@ -20,9 +21,9 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.exampleWebview",
-        "title": "Example Webview",
-        "category": "Webviews"
+        "command": "extension.codemeWebview",
+        "title": "CodeMe AI",
+        "category": "CodeMe"
       }
     ]
   },
