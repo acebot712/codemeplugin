@@ -22,45 +22,35 @@ function getWebviewContent() {
 
 const webviewContent = getWebviewContent();
 
-
 export function activate(context: vscode.ExtensionContext) {
 
-	// vscode.env.openExternal(vscode.Uri.parse(LOGIN_URL));
+	let myWebviewViewProvider = {
+		resolveWebviewView(
+			webviewView: vscode.WebviewView,
+			context: vscode.WebviewViewResolveContext<unknown>,
+			token: vscode.CancellationToken
+		): void | Thenable<void> {
+			webviewView.webview.options = {enableScripts: true};
+	
+			// Create the initial content of the webview
+			webviewView.webview.html = webviewContent;
+			// Listen for messages from the webview
+			webviewView.webview.onDidReceiveMessage((message) => {
+				if (message.command === 'sessionToken') {
+					const sessionToken = message.value;
+					// Do something with the sessionToken value
+					console.log(`session_token: ${sessionToken}`);
+	
+					console.log(process.cwd());
+					// panel.webview.html = webviewContent;
+	
+				}
+			});
+		}
+	};
 
-	// Define a function to create the chatbot view
-	function createChatbotView() {
-		// Create a webview panel to show the chatbot view
-		const panel = vscode.window.createWebviewPanel(
-			'codemeWebview', // Identifies the type of the webview. Used internally
-			'CodeMe', // Title of the panel displayed to the user
-			vscode.ViewColumn.One, // Editor column to show the new webview panel in.
-			{
-				enableScripts: true,
-				retainContextWhenHidden: true
-			} // Webview options. More on these later.
-		);
-
-		panel.webview.html = webviewContent;
-
-		// Listen for messages from the webview
-		panel.webview.onDidReceiveMessage((message) => {
-			if (message.command === 'sessionToken') {
-				const sessionToken = message.value;
-				// Do something with the sessionToken value
-				console.log(`session_token: ${sessionToken}`);
-
-				console.log(process.cwd());
-				// panel.webview.html = webviewContent;
-				
-			}
-		});
-	}
-
-	// Register a command to create the chatbot view
 	context.subscriptions.push(
-		vscode.commands.registerCommand('extension.codemeWebview', () => {
-			createChatbotView();
-		})
+		vscode.window.registerWebviewViewProvider('extension.codemeWebview', myWebviewViewProvider)
 	);
 
 }

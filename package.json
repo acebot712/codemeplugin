@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/acebot712/codemeplugin.git"
   },
-  "version": "0.0.1",
+  "version": "0.0.3",
   "publisher": "CodeMe",
   "engines": {
     "vscode": "^1.77.0"
@@ -25,7 +25,25 @@
         "title": "CodeMe AI",
         "category": "CodeMe"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "webview",
+          "title": "CodeMe",
+          "icon": "./images/chatbot.png"
+        }
+      ]
+    },
+    "views": {
+      "webview": [
+        {
+          "type": "webview",
+          "id": "extension.codemeWebview",
+          "name": "World's Best AI Powered Coding Assistant"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
