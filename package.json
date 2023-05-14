@@ -1,7 +1,7 @@
 {
   "name": "codeme",
   "displayName": "CodeMe",
-  "description": "",
+  "description": "🚀 Use CodeMe to boost your coding efficiency!",
   "icon": "./images/CodeMeLogo.png",
   "repository": {
     "type": "git",
