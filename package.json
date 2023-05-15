@@ -7,14 +7,21 @@
     "type": "git",
     "url": "https://github.com/acebot712/codemeplugin.git"
   },
-  "version": "0.0.4",
+  "version": "0.0.7",
   "publisher": "CodeMe",
   "engines": {
     "vscode": "^1.77.0"
   },
   "license": "MIT",
   "categories": [
-    "Other"
+    "Programming Languages",
+    "Machine Learning",
+    "Education",
+    "Snippets",
+    "Testing",
+    "Linters",
+    "Formatters",
+    "Data Science"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",

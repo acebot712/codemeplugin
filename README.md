@@ -38,5 +38,5 @@ A: CodeMe uses proprietary LLMs that have been trained on a large body of clean 
 
 Overall, our plug-in is an all-in-one tool designed to streamline the coding experience and help developers be more productive. 
 
-We’d love to hear your feedback! If you wish to share, then please complete the form [here](https://docs.google.com/forms/d/e/1FAIpQLScfvvh3yWzfn4oa5vjs4eg6VH0j4VKFSOBmFWFuYkMpDRfJdQ/viewform?usp=sf_link). If you have any questions, you may contact us at [CodeMe Support](mailto:support@codeme.site).
+We’d love to hear your feedback! If you wish to share, then please complete the form [here](https://docs.google.com/forms/d/e/1FAIpQLScfvvh3yWzfn4oa5vjs4eg6VH0j4VKFSOBmFWFuYkMpDRfJdQ/viewform?usp=sf_link). If you have any questions, you may contact us at support@codeme.site.
 
