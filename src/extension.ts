@@ -34,11 +34,8 @@ class MyWebviewViewProvider implements vscode.WebviewViewProvider {
 				const modifiedDashboardContent = dashboardContent.replace(/"#login_id#"/g, userDetails[1]).replace(/"#user_id#"/g, userDetails[0]);
 
 				webviewView.webview.html = modifiedDashboardContent;
-			}
-		});
-
-		webviewView.webview.onDidReceiveMessage((message) => {
-			if (message.command === 'signOut') {
+			} else if (message.command === 'signOut'){
+				console.log("SIGNOUT MESSAGE")
 				// Change the webview's HTML to the contents of index.html
 				webviewView.webview.html = getWebviewContent("/index.html");
 			}
