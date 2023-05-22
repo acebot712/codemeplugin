@@ -1,10 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
-const LOGIN_URL = 'http://127.0.0.1:8000';
-const COOKIE_NAME = 'my-extension-token';
-
-function readFileContents(filePath: string): string {
+function getWebviewContent(filePath: string): string {
 	try {
 		// Read file contents synchronously
 		const fileContents = fs.readFileSync(__dirname + filePath, 'utf-8');
@@ -15,54 +12,42 @@ function readFileContents(filePath: string): string {
 	}
 }
 
-// Define a function to get the webview's HTML content
-function getWebviewContent() {
-	return readFileContents("/dashboard.html");
-}
 
-const webviewContent = getWebviewContent();
-
-
-export function activate(context: vscode.ExtensionContext) {
-
-	// vscode.env.openExternal(vscode.Uri.parse(LOGIN_URL));
-
-	// Define a function to create the chatbot view
-	function createChatbotView() {
-		// Create a webview panel to show the chatbot view
-		const panel = vscode.window.createWebviewPanel(
-			'codemeWebview', // Identifies the type of the webview. Used internally
-			'CodeMe', // Title of the panel displayed to the user
-			vscode.ViewColumn.One, // Editor column to show the new webview panel in.
-			{
-				enableScripts: true,
-				retainContextWhenHidden: true
-			} // Webview options. More on these later.
-		);
-
-		panel.webview.html = webviewContent;
-
+class MyWebviewViewProvider implements vscode.WebviewViewProvider {
+	resolveWebviewView(
+		webviewView: vscode.WebviewView,
+		context: vscode.WebviewViewResolveContext<unknown>,
+		token: vscode.CancellationToken
+	): void | Thenable<void> {
+		webviewView.webview.options = { enableScripts: true };
+		// Create the initial content of the webview
+		webviewView.webview.html = getWebviewContent("/index.html");
 		// Listen for messages from the webview
-		panel.webview.onDidReceiveMessage((message) => {
+		webviewView.webview.onDidReceiveMessage((message) => {
 			if (message.command === 'sessionToken') {
-				const sessionToken = message.value;
-				// Do something with the sessionToken value
-				console.log(`session_token: ${sessionToken}`);
+				// Change the webview's HTML to the contents of dashboard.html
+				const dashboardContent = getWebviewContent("/dashboard.html");
+				const userDetails = message.text.split("||");
 
-				console.log(process.cwd());
-				// panel.webview.html = webviewContent;
-				
+				// Replace placeholders in dashboardContent with message.command value
+				// get userDetails[1] has data.login_id.
+				const modifiedDashboardContent = dashboardContent.replace(/"#login_id#"/g, userDetails[1]).replace(/"#user_id#"/g, userDetails[0]);
+
+				webviewView.webview.html = modifiedDashboardContent;
+			} else if (message.command === 'signOut'){
+				console.log("SIGNOUT MESSAGE")
+				// Change the webview's HTML to the contents of index.html
+				webviewView.webview.html = getWebviewContent("/index.html");
 			}
 		});
 	}
+}
 
-	// Register a command to create the chatbot view
+
+export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
-		vscode.commands.registerCommand('extension.codemeWebview', () => {
-			createChatbotView();
-		})
+		vscode.window.registerWebviewViewProvider('extension.codemeWebview', new MyWebviewViewProvider())
 	);
-
 }
 
 export function deactivate() { }

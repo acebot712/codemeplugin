@@ -1,20 +1,27 @@
 {
   "name": "codeme",
   "displayName": "CodeMe",
-  "description": "",
+  "description": "🚀 Use CodeMe to boost your coding efficiency!",
   "icon": "./images/CodeMeLogo.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/acebot712/codemeplugin.git"
   },
-  "version": "0.0.1",
+  "version": "0.0.10",
   "publisher": "CodeMe",
   "engines": {
     "vscode": "^1.77.0"
   },
   "license": "MIT",
   "categories": [
-    "Other"
+    "Programming Languages",
+    "Machine Learning",
+    "Education",
+    "Snippets",
+    "Testing",
+    "Linters",
+    "Formatters",
+    "Data Science"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
@@ -25,7 +32,25 @@
         "title": "CodeMe AI",
         "category": "CodeMe"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "webview",
+          "title": "CodeMe",
+          "icon": "./images/chatbot.png"
+        }
+      ]
+    },
+    "views": {
+      "webview": [
+        {
+          "type": "webview",
+          "id": "extension.codemeWebview",
+          "name": "World's Best AI Powered Coding Assistant"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
