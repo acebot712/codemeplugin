@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
-function readFileContents(filePath: string): string {
+function getWebviewContent(filePath: string): string {
 	try {
 		// Read file contents synchronously
 		const fileContents = fs.readFileSync(__dirname + filePath, 'utf-8');
@@ -12,13 +12,6 @@ function readFileContents(filePath: string): string {
 	}
 }
 
-// Define a function to get the webview's HTML content
-function getWebviewContent() {
-	return readFileContents("/dashboard.html");
-}
-
-const webviewContent = getWebviewContent();
-
 
 class MyWebviewViewProvider implements vscode.WebviewViewProvider {
 	resolveWebviewView(
@@ -28,11 +21,26 @@ class MyWebviewViewProvider implements vscode.WebviewViewProvider {
 	): void | Thenable<void> {
 		webviewView.webview.options = { enableScripts: true };
 		// Create the initial content of the webview
-		webviewView.webview.html = webviewContent;
+		webviewView.webview.html = getWebviewContent("/index.html");
 		// Listen for messages from the webview
 		webviewView.webview.onDidReceiveMessage((message) => {
 			if (message.command === 'sessionToken') {
-				console.log(process.cwd());
+				// Change the webview's HTML to the contents of dashboard.html
+				const dashboardContent = getWebviewContent("/dashboard.html");
+				const userDetails = message.text.split("||");
+
+				// Replace placeholders in dashboardContent with message.command value
+				// get userDetails[1] has data.login_id.
+				const modifiedDashboardContent = dashboardContent.replace(/"#login_id#"/g, userDetails[1]).replace(/"#user_id#"/g, userDetails[0]);
+
+				webviewView.webview.html = modifiedDashboardContent;
+			}
+		});
+
+		webviewView.webview.onDidReceiveMessage((message) => {
+			if (message.command === 'signOut') {
+				// Change the webview's HTML to the contents of index.html
+				webviewView.webview.html = getWebviewContent("/index.html");
 			}
 		});
 	}
