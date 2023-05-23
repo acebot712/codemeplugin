@@ -29,7 +29,7 @@
     "commands": [
       {
         "command": "extension.codemeWebview",
-        "title": "CodeMe AI",
+        "title": "CodeMe",
         "category": "CodeMe"
       }
     ],
@@ -38,7 +38,7 @@
         {
           "id": "webview",
           "title": "CodeMe",
-          "icon": "./images/chatbot.png"
+          "icon": "./images/SpermLogo.png"
         }
       ]
     },

@@ -35,9 +35,10 @@ class MyWebviewViewProvider implements vscode.WebviewViewProvider {
 
 				webviewView.webview.html = modifiedDashboardContent;
 			} else if (message.command === 'signOut'){
-				console.log("SIGNOUT MESSAGE")
 				// Change the webview's HTML to the contents of index.html
 				webviewView.webview.html = getWebviewContent("/index.html");
+			} else if (message.command === 'sessionTokenFail') {
+				vscode.window.showInformationMessage("Invalid access token. Please try again.");
 			}
 		});
 	}
