@@ -3,10 +3,7 @@
   "displayName": "CodeMe",
   "description": "🚀 Use CodeMe to boost your coding efficiency!",
   "icon": "./images/CodeMeLogo.png",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/acebot712/codemeplugin.git"
-  },
+  "homepage": "https://www.codeme.site/",
   "version": "0.0.10",
   "publisher": "CodeMe",
   "engines": {
