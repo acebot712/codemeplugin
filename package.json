@@ -4,7 +4,11 @@
   "description": "🚀 Use CodeMe to boost your coding efficiency!",
   "icon": "./images/CodeMeLogo.png",
   "homepage": "https://www.codeme.site/",
-  "version": "0.0.11",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/acebot712/codemeplugin.git"
+  },
+  "version": "0.0.12",
   "publisher": "CodeMe",
   "engines": {
     "vscode": "^1.77.0"

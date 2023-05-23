@@ -1,7 +1,7 @@
 Change Log
 All notable changes to the "codeme" extension will be documented in this file.
 
-[0.0.11]
+[0.0.12]
 Added
 Added new code scanning feature to identify potential issues in codebase.
 Added automatic code suggestion feature to provide helpful suggestions as you code.
