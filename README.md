@@ -2,8 +2,8 @@
 
 🚀 Use CodeMe to boost your coding efficiency! 
 
-<figure class="video_container">
-  <video autoplay loop muted>
+<figure class="video_container" style="width: 100%; max-width: 100%; overflow: hidden;">
+  <video autoplay loop muted style="width: 100%; height: auto;">
     <source src="https://res.cloudinary.com/dyjvkjts4/video/upload/v1685136639/automatic_suggestions_acmbqh.mp4" type="video/mp4">
   </video>
 </figure>
