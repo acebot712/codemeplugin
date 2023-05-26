@@ -4,7 +4,7 @@
 
 <figure class="video_container">
   <video autoplay loop muted>
-    <source src="./images/automaticsuggestions.mp4" type="video/mp4">
+    <source src="https://res.cloudinary.com/dyjvkjts4/video/upload/v1685136639/automatic_suggestions_acmbqh.mp4" type="video/mp4">
   </video>
 </figure>
 
