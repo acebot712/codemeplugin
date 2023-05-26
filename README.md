@@ -2,6 +2,11 @@
 
 🚀 Use CodeMe to boost your coding efficiency! 
 
+<figure class="video_container">
+  <video autoplay loop muted>
+    <source src="./images/automaticsuggestions.mp4" type="video/mp4">
+  </video>
+</figure>
 
 ## Description
 Our plug-in combines several unique features to enhance the coding experience. The tool's primary focus is on saving developers time and boosting their productivity. Here is a detailed description of our plug-in's features:
