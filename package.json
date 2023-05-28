@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/acebot712/codemeplugin.git"
   },
-  "version": "0.0.15",
+  "version": "0.0.16",
   "publisher": "CodeMe",
   "engines": {
     "vscode": "^1.77.0"
