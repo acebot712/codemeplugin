@@ -1,14 +1,14 @@
 {
   "name": "codeme",
-  "displayName": "CodeMe",
-  "description": "🚀 Use CodeMe to boost your coding efficiency!",
+  "displayName": "CodeMe Copilot",
+  "description": "🚀 Use CodeMe Copilot to boost your coding efficiency!",
   "icon": "./images/CodeMeLogo.png",
   "homepage": "https://www.codeme.site/",
   "repository": {
     "type": "git",
     "url": "https://github.com/acebot712/codemeplugin.git"
   },
-  "version": "0.0.16",
+  "version": "0.0.17",
   "publisher": "CodeMe",
   "engines": {
     "vscode": "^1.77.0"
@@ -38,7 +38,7 @@
       "activitybar": [
         {
           "id": "webview",
-          "title": "CodeMe",
+          "title": "CodeMe Copilot",
           "icon": "./images/SpermLogo.png"
         }
       ]
