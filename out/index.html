@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CodeMe: Login</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #fff;
+            margin-top: 40px;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            color: #ccc;
+        }
+
+        input[type="text"] {
+            background-color: #222;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            width: 300px;
+            /* Adjust the width as needed */
+        }
+
+
+        button[type="submit"] {
+            background-color: #333;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #666;
+        }
+
+        #content {
+            margin-top: 20px;
+            color: #ccc;
+        }
+
+        a {
+            color: #0078d7;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>CodeMe: Login</h1>
+    <form id="token-form">
+        <label for="access-token">Enter Access Token:</label><br>
+        <input type="text" id="access-token" name="access-token">
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="content">
+        <!-- Initial content of the page -->
+        <p>Welcome! Please enter your access token.</p>
+    </div>
+    <p>Don't have an access token? <a href="http://35.223.253.138:3000/">Get one-time access token now!</a></p>
+
+    <script>
+        const vscode = acquireVsCodeApi();
+        var accessToken = "";
+        // Function to handle the form submission
+        document.getElementById("token-form").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Get the entered token value
+            accessToken = document.getElementById("access-token").value;
+
+            // Make a fetch request to the server-side API
+            fetch('http://35.223.253.138:3000/api/check-token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ token: accessToken })
+            })
+                .then(function (response) {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('An error occurred while checking the access token.');
+                    }
+                })
+                .then(function (data) {
+                    if (data.valid) {
+                        // Update the content of the page
+                        vscode.postMessage({ command: 'sessionToken', text: data.user_id + "||" + data.login_id });
+                    } else {
+                        // Display an error message
+                        vscode.postMessage({ command: 'sessionTokenFail' });
+                    }
+                })
+                .catch(function (error) {
+                    // Display an error message
+                    console.log(error.message);
+                });
+        });
+    </script>
+</body>
+
+</html>

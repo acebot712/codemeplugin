@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CodeMe: Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #ddd;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #ddd;
+        }
+
+        /* Custom background color */
+        .hljs {
+            background-color: #2d2d2d;
+            color: #ffffff;
+        }
+
+        .hljs-keyword,
+        .hljs-selector-tag,
+        .hljs-literal,
+        .hljs-section,
+        .hljs-link {
+            color: cyan;
+        }
+
+        .hljs-deletion, .hljs-number, .hljs-quote, .hljs-selector-class, .hljs-selector-id, .hljs-string, .hljs-template-tag, .hljs-type {
+            color: yellow;
+
+        }
+
+        .hljs-built_in {
+            color: mediumspringgreen;
+        }
+
+        .hljs-title {
+            color: greenyellow; /* Green color */
+        }
+
+        code.language-mermaid {
+            color: white;
+        } 
+
+        .form-wrapper {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+        }
+
+        input[type="text"],
+        textarea {
+            background-color: #2d2d2d;
+            color: #ddd;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            box-shadow: none;
+            font-size: 16px;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #0078d7;
+        }
+
+        button {
+            background-color: #333;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        button:hover {
+            background-color: #666;
+        }
+
+
+        .sign-out-icon {
+            color: #fff;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <h1>CodeMe</h1>
+                <div>
+                    Hi <i>"#login_id#"</i>!
+                    <button id="sign-out-btn" class="btn">
+                        <i class="fas fa-sign-out-alt sign-out-icon"></i>
+                    </button>
+                </div>
+                <form>
+                    <div class="form-wrapper">
+                        <div class="form-group">
+                            <label for="api-request">AI Powered Coding assistant</label>
+                            <textarea class="form-control textarea resize-ta" id="api-request" name="api-request" style="height: 2em; overflow: auto;" spellcheck="false"></textarea>
+                        </div>
+                        <button type="button" class="btn" onclick="sendAPIRequest()" style="background-color: #333;">
+                            <span style="color: white;">Send</span>
+                        </button>
+                    </div>
+
+                </form>
+                <div>
+                    <hr>
+                    <div id="response-div">
+                    </div>
+                </div>
+                <!-- <button class="copy-to-clipboard" data-clipboard-target="#output">Copy Code</button> -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // const vscode = acquireVsCodeApi();
+        const responseDiv = document.getElementById("response-div");
+
+        function processOutput(rawOutput) {
+            // Enable clipboard functionality
+            // new ClipboardJS('.copy-to-clipboard');
+            var outputText = rawOutput.toString();
+            var renderedOutput = marked.parse(rawOutput);
+            return renderedOutput;
+        }
+
+        // Get the cookies for the current document
+        const cookies = document.cookie.split('; ');
+
+        // Dealing with Textarea Height
+        function calcHeight(value) {
+            let numberOfLineBreaks = (value.match(/\n/g) || []).length;
+            // min-height + lines x line-height + padding + border
+            let newHeight = 20 + numberOfLineBreaks * 20 + 12 + 2;
+            return newHeight;
+        }
+
+        let textarea = document.querySelector(".resize-ta");
+        textarea.addEventListener("keyup", () => {
+            textarea.style.height = calcHeight(textarea.value) + "px";
+        });
+
+        document.getElementById("api-request").addEventListener("keyup", function (event) {
+            if (event.key === "Enter" && event.shiftKey) {
+                textarea.style.height = calcHeight(textarea.value) + "px"; // call the calcHeight function here
+                // Simulate a backspace keypress to remove the newline character
+            } else if (event.key === "Enter") {
+                event.preventDefault(); // prevent default behavior of textarea to insert new line
+                sendAPIRequest(); // call your function here
+            }
+        });
+
+        function sendAPIRequest() {
+            const apiRequest = JSON.stringify(document.getElementById("api-request").value);
+            console.log(apiRequest);
+            responseDiv.innerHTML = 'Thinking of the best solution to your prompt...';
+            const session_token = document.cookie.replace(/(?:(?:^|.*;\s*)session_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+            const requestOptions = {
+                method: 'POST',
+                cache: "no-cache",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 'prompt': apiRequest, 'user_id': '"#user_id#"', 'login_id': '"#login_id#"' })
+            };
+            fetch('http://35.223.253.138:8000/getcode/turbo', requestOptions)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    var actual_output = processOutput(data.code);
+                    responseDiv.innerHTML = actual_output;
+                    hljs.highlightAll();
+                })
+                .catch(error => console.error(error));
+
+        }
+
+        // // Run the code snippet processing function on page load
+        // window.onload = function () {
+        //     var replaced = processOutput(document.getElementById("response-div").innerHTML);
+        //     responseDiv.innerHTML = replaced;
+        //     hljs.highlightAll();
+        // };
+
+        // Function to handle the sign-out button click
+        document.getElementById("sign-out-btn").addEventListener("click", function () {
+            // Make a fetch request to the server-side API
+            fetch('http://35.223.253.138:3000/api/sign-out', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'user_id': '"#user_id#"', 'login_id': '"#login_id#"' })
+            })
+                .then(function (data) {
+                    vscode.postMessage({ command: 'signOut' });
+                })
+                .catch(function (error) {
+                    // Display an error message
+                    console.log(error.message);
+                });
+        });
+    </script>
+
+</body>
+
+</html>
