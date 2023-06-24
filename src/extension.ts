@@ -20,6 +20,7 @@ class MyWebviewViewProvider implements vscode.WebviewViewProvider {
 		token: vscode.CancellationToken
 	): void | Thenable<void> {
 		webviewView.webview.options = { enableScripts: true };
+
 		// Create the initial content of the webview
 		webviewView.webview.html = getWebviewContent("/index.html");
 		// Listen for messages from the webview
@@ -39,14 +40,7 @@ class MyWebviewViewProvider implements vscode.WebviewViewProvider {
 				webviewView.webview.html = getWebviewContent("/index.html");
 			} else if (message.command === 'sessionTokenFail') {
 				vscode.window.showInformationMessage("Invalid access token. Please try again.");
-			} else if (message.command === 'copyToClipboard') {
-				vscode.env.clipboard.writeText(message.text)
-					.then(() => {
-						console.log('Text copied to clipboard');
-						// Optionally, you can send a message back to the WebView to indicate the copy was successful
-						// For example: vscode.postMessage({ command: 'copySuccess' });
-					});
-			}
+			} 
 		});
 	}
 }
