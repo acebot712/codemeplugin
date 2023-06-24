@@ -37,6 +37,14 @@ class MyWebviewViewProvider {
             else if (message.command === 'sessionTokenFail') {
                 vscode.window.showInformationMessage("Invalid access token. Please try again.");
             }
+            else if (message.command === 'copyToClipboard') {
+                vscode.env.clipboard.writeText(message.text)
+                    .then(() => {
+                    console.log('Text copied to clipboard');
+                    // Optionally, you can send a message back to the WebView to indicate the copy was successful
+                    // For example: vscode.postMessage({ command: 'copySuccess' });
+                });
+            }
         });
     }
 }

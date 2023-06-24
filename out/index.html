@@ -79,6 +79,17 @@
     <script>
         const vscode = acquireVsCodeApi();
         var accessToken = "";
+
+        // Check if the token already exists in globalState
+        const savedState = vscode.getState();
+        if (savedState && savedState.token) {
+            accessToken = savedState.token;
+            document.getElementById("access-token").value = accessToken;
+
+            // Submit the token form automatically
+            submitTokenForm();
+        }
+
         // Function to handle the form submission
         document.getElementById("token-form").addEventListener("submit", function (event) {
             event.preventDefault(); // Prevent form submission
@@ -105,9 +116,15 @@
                     if (data.valid) {
                         // Update the content of the page
                         vscode.postMessage({ command: 'sessionToken', text: data.user_id + "||" + data.login_id });
+
+                        // Save the token in globalState
+                        vscode.setState({ token: accessToken });
                     } else {
                         // Display an error message
                         vscode.postMessage({ command: 'sessionTokenFail' });
+
+                        // Remove the token from globalState
+                        vscode.setState({ token: undefined });
                     }
                 })
                 .catch(function (error) {
@@ -115,6 +132,11 @@
                     console.log(error.message);
                 });
         });
+
+        // Function to submit the token form
+        function submitTokenForm() {
+            document.getElementById("token-form").submit();
+        }
     </script>
 </body>
 

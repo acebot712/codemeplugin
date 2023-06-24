@@ -34,11 +34,18 @@ class MyWebviewViewProvider implements vscode.WebviewViewProvider {
 				const modifiedDashboardContent = dashboardContent.replace(/"#login_id#"/g, userDetails[1]).replace(/"#user_id#"/g, userDetails[0]);
 
 				webviewView.webview.html = modifiedDashboardContent;
-			} else if (message.command === 'signOut'){
+			} else if (message.command === 'signOut') {
 				// Change the webview's HTML to the contents of index.html
 				webviewView.webview.html = getWebviewContent("/index.html");
 			} else if (message.command === 'sessionTokenFail') {
 				vscode.window.showInformationMessage("Invalid access token. Please try again.");
+			} else if (message.command === 'copyToClipboard') {
+				vscode.env.clipboard.writeText(message.text)
+					.then(() => {
+						console.log('Text copied to clipboard');
+						// Optionally, you can send a message back to the WebView to indicate the copy was successful
+						// For example: vscode.postMessage({ command: 'copySuccess' });
+					});
 			}
 		});
 	}

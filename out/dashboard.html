@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 
     <style>
         body {
@@ -38,7 +39,14 @@
             color: cyan;
         }
 
-        .hljs-deletion, .hljs-number, .hljs-quote, .hljs-selector-class, .hljs-selector-id, .hljs-string, .hljs-template-tag, .hljs-type {
+        .hljs-deletion,
+        .hljs-number,
+        .hljs-quote,
+        .hljs-selector-class,
+        .hljs-selector-id,
+        .hljs-string,
+        .hljs-template-tag,
+        .hljs-type {
             color: yellow;
 
         }
@@ -48,12 +56,13 @@
         }
 
         .hljs-title {
-            color: greenyellow; /* Green color */
+            color: greenyellow;
+            /* Green color */
         }
 
         code.language-mermaid {
             color: white;
-        } 
+        }
 
         .form-wrapper {
             display: flex;
@@ -91,14 +100,29 @@
             display: inline-block;
         }
 
-        button:hover {
-            background-color: #666;
-        }
-
-
         .sign-out-icon {
             color: #fff;
             font-size: 20px;
+        }
+
+        .copy-button {
+            cursor: pointer;
+            border: none;
+            display: inline;
+            background-color: #7c6e6e;
+        }
+
+        .copy-button:hover {
+            color: #c2bcbc;
+        }
+
+        div.clipboard-button-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            padding: 3px;
+            color: #ffffff;
+            background-color: #7c6e6e;
+            border: none;
         }
     </style>
 </head>
@@ -118,7 +142,8 @@
                     <div class="form-wrapper">
                         <div class="form-group">
                             <label for="api-request">AI Powered Coding assistant</label>
-                            <textarea class="form-control textarea resize-ta" id="api-request" name="api-request" style="height: 2em; overflow: auto;" spellcheck="false"></textarea>
+                            <textarea class="form-control textarea resize-ta" id="api-request" name="api-request"
+                                style="height: 2em; overflow: auto;" spellcheck="false"></textarea>
                         </div>
                         <button type="button" class="btn" onclick="sendAPIRequest()" style="background-color: #333;">
                             <span style="color: white;">Send</span>
@@ -131,18 +156,24 @@
                     <div id="response-div">
                     </div>
                 </div>
-                <!-- <button class="copy-to-clipboard" data-clipboard-target="#output">Copy Code</button> -->
             </div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
     <script>
-        // const vscode = acquireVsCodeApi();
+        const vscode = acquireVsCodeApi();
         const responseDiv = document.getElementById("response-div");
 
+        // function processOutput(rawOutput) {
+        //     // Enable clipboard functionality
+        //     // new ClipboardJS('.copy-to-clipboard');
+        //     var outputText = rawOutput.toString();
+        //     var renderedOutput = marked.parse(rawOutput);
+        //     return renderedOutput;
+        // }
+
         function processOutput(rawOutput) {
-            // Enable clipboard functionality
-            // new ClipboardJS('.copy-to-clipboard');
             var outputText = rawOutput.toString();
             var renderedOutput = marked.parse(rawOutput);
             return renderedOutput;
@@ -196,19 +227,59 @@
                 })
                 .then(data => {
                     var actual_output = processOutput(data.code);
+
                     responseDiv.innerHTML = actual_output;
+
+                    // Add clipboard button to code blocks
+                    var codeBlocks = document.getElementsByTagName('code');
+                    for (var i = 0; i < codeBlocks.length; i++) {
+                        var codeBlock = codeBlocks[i];
+                        var parentElement = codeBlock.parentNode;
+
+                        // Check if the parent element is a pre tag
+                        if (parentElement.nodeName.toLowerCase() === 'pre') {
+                            // Create a button element
+                            var clipboardButton = document.createElement('button');
+                            var divWrapper = document.createElement('div');
+
+                            clipboardButton.className = 'copy-to-clipboard copy-button';
+                            divWrapper.className = 'clipboard-button-wrapper';
+
+                            const originalCopyButtonText = '<i data-feather="clipboard"></i> Copy code'
+                            clipboardButton.innerHTML = originalCopyButtonText;
+
+                            // Set the data-clipboard-text attribute to the code content
+                            clipboardButton.setAttribute('data-clipboard-text', codeBlock.textContent);
+
+                            // Append the button to the parent element
+                            parentElement.appendChild(divWrapper);
+                            divWrapper.appendChild(clipboardButton);
+
+                            // Add click event listener to the copy button
+                            clipboardButton.addEventListener('click', function () {
+                                vscode.postMessage({ command: 'copyToClipboard', text: codeBlock.textContent });
+
+                                // Change button text to "Copied!"
+                                clipboardButton.innerHTML = '<i data-feather="check"></i> Copied!';
+                                feather.replace({ 'width': 16, 'height': 16 });
+
+                                // Set a timeout to change the button text back to its original content
+                                setTimeout(function () {
+                                    clipboardButton.innerHTML = originalCopyButtonText;
+                                    feather.replace({ 'width': 16, 'height': 16 });
+                                }, 2000);
+                            });
+                        } else {
+                            console.log("Failed to make copy button");
+                        }
+                    }
+
+                    feather.replace({ 'width': 16, 'height': 16 });
                     hljs.highlightAll();
                 })
                 .catch(error => console.error(error));
 
         }
-
-        // // Run the code snippet processing function on page load
-        // window.onload = function () {
-        //     var replaced = processOutput(document.getElementById("response-div").innerHTML);
-        //     responseDiv.innerHTML = replaced;
-        //     hljs.highlightAll();
-        // };
 
         // Function to handle the sign-out button click
         document.getElementById("sign-out-btn").addEventListener("click", function () {
@@ -222,6 +293,9 @@
             })
                 .then(function (data) {
                     vscode.postMessage({ command: 'signOut' });
+
+                    // Remove the token from globalState
+                    vscode.setState({ token: undefined });
                 })
                 .catch(function (error) {
                     // Display an error message
