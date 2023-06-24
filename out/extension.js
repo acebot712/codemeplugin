@@ -37,6 +37,14 @@ class MyWebviewViewProvider {
             else if (message.command === 'sessionTokenFail') {
                 vscode.window.showInformationMessage("Invalid access token. Please try again.");
             }
+            else if (message.command === 'getHighlightedText') {
+                let editor = vscode.window.activeTextEditor;
+                if (editor) {
+                    let selectedText = editor.document.getText(editor.selection);
+                    // Send the selected text back to the webview
+                    webviewView.webview.postMessage({ command: 'highlightedText', text: selectedText });
+                }
+            }
         });
     }
 }
