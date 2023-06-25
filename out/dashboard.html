@@ -135,7 +135,8 @@
             <div class="col-md-8 mx-auto">
                 <h1>CodeMe</h1>
                 <div>
-                    Hi <i>"#login_id#"</i>!
+                    <!-- Hi <i>"#login_id#"</i>! -->
+                    Hey there!
                     <button id="sign-out-btn" class="btn">
                         <i class="fas fa-sign-out-alt sign-out-icon"></i>
                     </button>
@@ -167,8 +168,43 @@
         const vscode = acquireVsCodeApi();
         const responseDiv = document.getElementById("response-div");
 
+        class TokenList {
+            constructor(maxTokens) {
+                this.maxTokens = maxTokens;
+                this.tokens = [];
+            }
+
+            addString(string) {
+                const stringTokens = string.split(' ');
+                const numTokensToAdd = stringTokens.length;
+                this.tokens.push(...stringTokens);
+
+                const tokensToRemove = Math.max(this.tokens.length - this.maxTokens, 0);
+                if (tokensToRemove > 0) {
+                    this.tokens.splice(0, tokensToRemove);
+                }
+
+                this.cleanTokens();
+            }
+
+            getList() {
+                return this.tokens;
+            }
+
+            getConcatenatedList() {
+                return this.tokens.join(' ');
+            }
+
+            cleanTokens() {
+                this.tokens = this.tokens.map(token => token.replace(/[^a-zA-Z0-9\\n]/g, ''));
+            }
+        }
+
+        const tokenList = new TokenList(1000);
+
         function processOutput(rawOutput) {
             var outputText = rawOutput.toString();
+            tokenList.addString(outputText);
             var renderedOutput = marked.parse(rawOutput);
             return renderedOutput;
         }
@@ -217,6 +253,10 @@
             // Process the selected text further
             selectedTextPromise.then((selectedText) => {
                 apiRequest = selectedText + '\n' + apiRequest;
+                tokenList.addString(apiRequest);
+                console.log(apiRequest);
+                apiRequest = tokenList.getConcatenatedList();
+                console.log(tokenList.getList())
                 console.log(apiRequest);
 
                 responseDiv.innerHTML = 'Thinking of the best solution to your prompt...';
