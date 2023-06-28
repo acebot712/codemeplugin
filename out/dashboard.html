@@ -200,7 +200,7 @@
             }
         }
 
-        const tokenList = new TokenList(2000);
+        const contextTokenList = new TokenList(2000);
 
         function processOutput(rawOutput) {
             var outputText = rawOutput.toString();
@@ -267,7 +267,12 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ 'prompt': apiRequest, 'user_id': '"#user_id#"', 'login_id': '"#login_id#"' })
+                    body: JSON.stringify({
+                        'prompt': apiRequest,
+                        'context': contextTokenList.getConcatenatedList(),
+                        'user_id': '"#user_id#"',
+                        'login_id': '"#login_id#"'
+                    })
                 };
                 fetch('http://35.223.253.138:8000/getcode/turbo', requestOptions)
                     .then(response => {
