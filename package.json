@@ -1,14 +1,14 @@
 {
   "name": "codeme",
-  "displayName": "CodeMe Copilot",
-  "description": "🚀 Use CodeMe Copilot to boost your coding efficiency!",
+  "displayName": "CodeMe Copilot (Free)",
+  "description": "🚀 Use CodeMe Copilot for free for boosting your coding efficiency!",
   "icon": "./images/CodeMeLogo.png",
   "homepage": "https://www.codeme.site/",
   "repository": {
     "type": "git",
     "url": "https://github.com/acebot712/codemeplugin.git"
   },
-  "version": "0.1.10",
+  "version": "0.1.13",
   "publisher": "CodeMe",
   "engines": {
     "vscode": "^1.77.0"

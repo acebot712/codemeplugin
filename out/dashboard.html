@@ -200,11 +200,11 @@
             }
         }
 
-        const tokenList = new TokenList(1000);
+        const tokenList = new TokenList(2000);
 
         function processOutput(rawOutput) {
             var outputText = rawOutput.toString();
-            tokenList.addString(outputText);
+            // tokenList.addString(outputText);
             var renderedOutput = marked.parse(rawOutput);
             return renderedOutput;
         }
@@ -253,10 +253,10 @@
             // Process the selected text further
             selectedTextPromise.then((selectedText) => {
                 apiRequest = selectedText + '\n' + apiRequest;
-                tokenList.addString(apiRequest);
-                console.log(apiRequest);
-                apiRequest = tokenList.getConcatenatedList();
-                console.log(tokenList.getList())
+                // tokenList.addString(apiRequest);
+                // console.log(apiRequest);
+                // apiRequest = tokenList.getConcatenatedList();
+                // console.log(tokenList.getList())
                 console.log(apiRequest);
 
                 responseDiv.innerHTML = 'Thinking of the best solution to your prompt...';
