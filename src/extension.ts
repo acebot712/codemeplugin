@@ -49,6 +49,12 @@ class MyWebviewViewProvider implements vscode.WebviewViewProvider {
 				} else {
 					webviewView.webview.postMessage({ command: 'highlightedText', text: "" });
 				}
+			} else if (message.command === 'copyToClipboard') {
+				const { text } = message;
+				vscode.env.clipboard.writeText(text)
+					.then(() => {
+						vscode.window.showInformationMessage('Code copied to clipboard!');
+					});
 			}
 		});
 	}

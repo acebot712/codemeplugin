@@ -235,6 +235,57 @@
             }
         });
 
+        function addCopyButtonToCodeBlocks() {
+            var codeBlocks = document.getElementsByTagName('code');
+            for (var i = 0; i < codeBlocks.length; i++) {
+                var codeBlock = codeBlocks[i];
+                var parentElement = codeBlock.parentNode;
+
+                // Check if the parent element is a pre tag
+                if (parentElement.nodeName.toLowerCase() === 'pre') {
+                    // Create a button element
+                    var clipboardButton = document.createElement('button');
+                    var divWrapper = document.createElement('div');
+
+                    clipboardButton.className = 'copy-to-clipboard copy-button';
+                    divWrapper.className = 'clipboard-button-wrapper';
+
+                    const originalCopyButtonText = '<i data-feather="clipboard"></i> Copy code';
+                    clipboardButton.innerHTML = originalCopyButtonText;
+
+                    // Set the data-clipboard-text attribute to the code content
+                    clipboardButton.setAttribute('data-clipboard-text', codeBlock.textContent);
+
+                    // Append the button to the parent element
+                    parentElement.appendChild(divWrapper);
+                    divWrapper.appendChild(clipboardButton);
+
+                    // Add click event listener to the copy button
+                    clipboardButton.addEventListener('click', (function (content) {
+                        return function () {
+                            vscode.postMessage({ command: 'copyToClipboard', text: content });
+
+                            // Change button text to "Copied!"
+                            clipboardButton.innerHTML = '<i data-feather="check"></i> Copied!';
+                            feather.replace({ 'width': 16, 'height': 16 });
+
+                            // Set a timeout to change the button text back to its original content
+                            setTimeout(function () {
+                                clipboardButton.innerHTML = originalCopyButtonText;
+                                feather.replace({ 'width': 16, 'height': 16 });
+                            }, 2000);
+                        };
+                    })(codeBlock.textContent));
+
+                } else {
+                    console.log("Failed to make copy button");
+                }
+            }
+
+            feather.replace({ 'width': 16, 'height': 16 });
+            hljs.highlightAll();
+        }
+
         function sendAPIRequest() {
             let apiRequest = JSON.stringify(document.getElementById("api-request").value);
             // Send a message to the extension requesting the highlighted text
@@ -252,7 +303,7 @@
 
             // Process the selected text further
             selectedTextPromise.then((selectedText) => {
-                apiRequest = selectedText + '\n' + apiRequest;
+                apiRequest += selectedText;
                 // tokenList.addString(apiRequest);
                 // console.log(apiRequest);
                 // apiRequest = tokenList.getConcatenatedList();
@@ -274,6 +325,7 @@
                         'login_id': '"#login_id#"'
                     })
                 };
+                console.log(contextTokenList.getConcatenatedList());
                 fetch('http://35.223.253.138:8000/getcode/turbo', requestOptions)
                     .then(response => {
                         if (!response.ok) {
@@ -286,53 +338,8 @@
 
                         responseDiv.innerHTML = actual_output;
 
-                        // Add clipboard button to code blocks
-                        var codeBlocks = document.getElementsByTagName('code');
-                        for (var i = 0; i < codeBlocks.length; i++) {
-                            var codeBlock = codeBlocks[i];
-                            var parentElement = codeBlock.parentNode;
-
-                            // Check if the parent element is a pre tag
-                            if (parentElement.nodeName.toLowerCase() === 'pre') {
-                                // Create a button element
-                                var clipboardButton = document.createElement('button');
-                                var divWrapper = document.createElement('div');
-
-                                clipboardButton.className = 'copy-to-clipboard copy-button';
-                                divWrapper.className = 'clipboard-button-wrapper';
-
-                                const originalCopyButtonText = '<i data-feather="clipboard"></i> Copy code'
-                                clipboardButton.innerHTML = originalCopyButtonText;
-
-                                // Set the data-clipboard-text attribute to the code content
-                                clipboardButton.setAttribute('data-clipboard-text', codeBlock.textContent);
-
-                                // Append the button to the parent element
-                                parentElement.appendChild(divWrapper);
-                                divWrapper.appendChild(clipboardButton);
-
-                                // Add click event listener to the copy button
-                                clipboardButton.addEventListener('click', function () {
-                                    vscode.postMessage({ command: 'copyToClipboard', text: codeBlock.textContent });
-
-                                    // Change button text to "Copied!"
-                                    clipboardButton.innerHTML = '<i data-feather="check"></i> Copied!';
-                                    feather.replace({ 'width': 16, 'height': 16 });
-
-                                    // Set a timeout to change the button text back to its original content
-                                    setTimeout(function () {
-                                        clipboardButton.innerHTML = originalCopyButtonText;
-                                        feather.replace({ 'width': 16, 'height': 16 });
-                                    }, 2000);
-                                });
-                            } else {
-                                console.log("Failed to make copy button");
-                            }
-                        }
-
-                        feather.replace({ 'width': 16, 'height': 16 });
-                        hljs.highlightAll();
-                        selectedTextPromise = "";
+                        // Call the function to add copy buttons to existing code blocks
+                        addCopyButtonToCodeBlocks();
                     })
                     .catch(error => console.error(error));
             });
