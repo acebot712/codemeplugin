@@ -22,7 +22,7 @@ class MyWebviewViewProvider implements vscode.WebviewViewProvider {
 		webviewView.webview.options = { enableScripts: true };
 
 		// Create the initial content of the webview
-		webviewView.webview.html = getWebviewContent("/index.html");
+		webviewView.webview.html = getWebviewContent("/dashboard.html");
 		// Listen for messages from the webview
 		webviewView.webview.onDidReceiveMessage((message) => {
 			if (message.command === 'sessionToken') {
@@ -37,7 +37,7 @@ class MyWebviewViewProvider implements vscode.WebviewViewProvider {
 				webviewView.webview.html = modifiedDashboardContent;
 			} else if (message.command === 'signOut') {
 				// Change the webview's HTML to the contents of index.html
-				webviewView.webview.html = getWebviewContent("/index.html");
+				webviewView.webview.html = getWebviewContent("/dashboard.html");
 			} else if (message.command === 'sessionTokenFail') {
 				vscode.window.showInformationMessage("Invalid access token. Please try again.");
 			} else if (message.command === 'getHighlightedText') {
@@ -46,7 +46,15 @@ class MyWebviewViewProvider implements vscode.WebviewViewProvider {
 					let selectedText = editor.document.getText(editor.selection);
 					// Send the selected text back to the webview
 					webviewView.webview.postMessage({ command: 'highlightedText', text: selectedText });
+				} else {
+					webviewView.webview.postMessage({ command: 'highlightedText', text: "" });
 				}
+			} else if (message.command === 'copyToClipboard') {
+				const { text } = message;
+				vscode.env.clipboard.writeText(text)
+					.then(() => {
+						vscode.window.showInformationMessage('Code copied to clipboard!');
+					});
 			}
 		});
 	}
