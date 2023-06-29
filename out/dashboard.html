@@ -171,32 +171,29 @@
         class TokenList {
             constructor(maxTokens) {
                 this.maxTokens = maxTokens;
-                this.tokens = [];
+                this.tokens = "";
             }
 
             addString(string) {
-                const stringTokens = string.split(' ');
-                const numTokensToAdd = stringTokens.length;
-                this.tokens.push(...stringTokens);
+                while(this.countTokens(this.tokens) + this.countTokens(string) > this.maxTokens) {
 
-                const tokensToRemove = Math.max(this.tokens.length - this.maxTokens, 0);
-                if (tokensToRemove > 0) {
-                    this.tokens.splice(0, tokensToRemove);
+                    const startTag = "<|im_start|>";
+                    const endTag = "<|im_end|>";
+
+                    const startIndex = this.tokens.indexOf(startTag);
+                    const endIndex = this.tokens.indexOf(endTag, startIndex + startTag.length);
+
+                    if (startIndex !== -1 && endIndex !== -1) {
+                        this.tokens = this.tokens.substring(0, startIndex) + this.tokens.substring(endIndex + endTag.length);
+                    } else {
+                        break;
+                    }
                 }
-
-                this.cleanTokens();
+                this.tokens += string
             }
 
-            getList() {
-                return this.tokens;
-            }
-
-            getConcatenatedList() {
-                return this.tokens.join(' ');
-            }
-
-            cleanTokens() {
-                this.tokens = this.tokens.map(token => token.replace(/[^a-zA-Z0-9\\n]/g, ''));
+            countTokens(string) {
+                return string.split(' ').length
             }
         }
 
@@ -204,7 +201,7 @@
 
         function processOutput(rawOutput) {
             var outputText = rawOutput.toString();
-            // tokenList.addString(outputText);
+            contextTokenList.addString("<|im_start|>assistant\n" + outputText + "<|im_end|>\n");
             var renderedOutput = marked.parse(rawOutput);
             return renderedOutput;
         }
@@ -304,10 +301,6 @@
             // Process the selected text further
             selectedTextPromise.then((selectedText) => {
                 apiRequest += selectedText;
-                // tokenList.addString(apiRequest);
-                // console.log(apiRequest);
-                // apiRequest = tokenList.getConcatenatedList();
-                // console.log(tokenList.getList())
                 console.log(apiRequest);
 
                 responseDiv.innerHTML = 'Thinking of the best solution to your prompt...';
@@ -320,12 +313,12 @@
                     },
                     body: JSON.stringify({
                         'prompt': apiRequest,
-                        'context': contextTokenList.getConcatenatedList(),
+                        'context': "Chat Context History: " + contextTokenList.tokens,
                         'user_id': '"#user_id#"',
                         'login_id': '"#login_id#"'
                     })
                 };
-                console.log(contextTokenList.getConcatenatedList());
+                console.log(contextTokenList.tokens);
                 fetch('http://35.223.253.138:8000/getcode/turbo', requestOptions)
                     .then(response => {
                         if (!response.ok) {
@@ -334,16 +327,16 @@
                         return response.json();
                     })
                     .then(data => {
-                        var actual_output = processOutput(data.code);
+                        contextTokenList.addString("<|im_start|>user\n" + apiRequest + "<|im_end|>\n");
+                        var actualOutput = processOutput(data.code);
 
-                        responseDiv.innerHTML = actual_output;
+                        responseDiv.innerHTML = actualOutput;
 
                         // Call the function to add copy buttons to existing code blocks
                         addCopyButtonToCodeBlocks();
                     })
                     .catch(error => console.error(error));
             });
-
         }
 
         // Function to handle the sign-out button click
