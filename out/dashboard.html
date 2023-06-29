@@ -89,6 +89,18 @@
             border-color: #0078d7;
         }
 
+        .form-control {
+            overflow: hidden;
+            /* Hide the scrollbar */
+        }
+
+        .form-control::-webkit-scrollbar {
+            width: 0px;
+            /* Remove the scrollbar */
+            background: transparent;
+            /* Set scrollbar background to transparent */
+        }
+
         button {
             background-color: #333;
             border: none;
@@ -146,13 +158,12 @@
                         <div class="form-group">
                             <label for="api-request">AI Powered Coding assistant</label>
                             <textarea class="form-control textarea resize-ta" id="api-request" name="api-request"
-                                style="height: 2em; overflow: auto;" spellcheck="false"></textarea>
+                                style="height: 2em; overflow: hidden;" spellcheck="false"></textarea>
                         </div>
                         <button type="button" class="btn" onclick="sendAPIRequest()" style="background-color: #333;">
                             <span style="color: white;">Send</span>
                         </button>
                     </div>
-
                 </form>
                 <div>
                     <hr>
@@ -175,7 +186,7 @@
             }
 
             addString(string) {
-                while(this.countTokens(this.tokens) + this.countTokens(string) > this.maxTokens) {
+                while (this.countTokens(this.tokens) + this.countTokens(string) > this.maxTokens) {
 
                     const startTag = "<|im_start|>";
                     const endTag = "<|im_end|>";
@@ -301,7 +312,7 @@
             // Process the selected text further
             selectedTextPromise.then((selectedText) => {
                 apiRequest += selectedText;
-                console.log(apiRequest);
+                // console.log(apiRequest);
 
                 responseDiv.innerHTML = 'Thinking of the best solution to your prompt...';
                 const session_token = document.cookie.replace(/(?:(?:^|.*;\s*)session_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
@@ -318,7 +329,7 @@
                         'login_id': '"#login_id#"'
                     })
                 };
-                console.log(contextTokenList.tokens);
+                // console.log(contextTokenList.tokens);
                 fetch('http://35.223.253.138:8000/getcode/turbo', requestOptions)
                     .then(response => {
                         if (!response.ok) {
