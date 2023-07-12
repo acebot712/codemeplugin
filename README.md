@@ -33,7 +33,7 @@ Our plugin can generate clear and easy-to-read UML diagrams, allowing you to bet
 ## FAQ
 
 Q: Is CodeMe Copilot free?
-A: CodeMe Copilot tool is free of costs as we’re conducting beta testing. Enjoy!
+A: CodeMe tool is free of costs. Enjoy!
 
 Q: How secure is CodeMe Copilot?
 A: We care about your security and privacy, we won’t retain code snippets, store or share your code regardless if the data is from public repositories, private repositories, or local files.

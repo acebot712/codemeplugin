@@ -89,16 +89,11 @@
             border-color: #0078d7;
         }
 
-        .form-control {
-            overflow: hidden;
-            /* Hide the scrollbar */
-        }
-
-        .form-control::-webkit-scrollbar {
-            width: 0px;
-            /* Remove the scrollbar */
-            background: transparent;
-            /* Set scrollbar background to transparent */
+        .resize-ta {
+            resize: vertical;
+            max-height: 200px;
+            /* Set your desired maximum height here */
+            overflow-y: hidden;
         }
 
         button {
@@ -158,12 +153,13 @@
                         <div class="form-group">
                             <label for="api-request">AI Powered Coding assistant</label>
                             <textarea class="form-control textarea resize-ta" id="api-request" name="api-request"
-                                style="height: 2em; overflow: hidden;" spellcheck="false"></textarea>
+                                style="height: 2em;" spellcheck="false"></textarea>
                         </div>
                         <button type="button" class="btn" onclick="sendAPIRequest()" style="background-color: #333;">
                             <span style="color: white;">Send</span>
                         </button>
                     </div>
+
                 </form>
                 <div>
                     <hr>
@@ -229,8 +225,15 @@
         }
 
         let textarea = document.querySelector(".resize-ta");
-        textarea.addEventListener("keyup", () => {
-            textarea.style.height = calcHeight(textarea.value) + "px";
+        textarea.addEventListener("input", () => {
+            let newHeight = calcHeight(textarea.value);
+            if (newHeight > 200) { // Set your desired maximum height here, for example, 200px
+                textarea.style.height = "200px";
+                textarea.style.overflowY = "scroll";
+            } else {
+                textarea.style.height = newHeight + "px";
+                textarea.style.overflowY = "hidden";
+            }
         });
 
         document.getElementById("api-request").addEventListener("keyup", function (event) {
@@ -315,6 +318,7 @@
                 // console.log(apiRequest);
 
                 responseDiv.innerHTML = 'Thinking of the best solution to your prompt...';
+                // responseDiv.innerHTML = 'Our servers are under maintenance. We apologize for the inconvenience. We will be back in a week to serve you soon :) ';
                 const session_token = document.cookie.replace(/(?:(?:^|.*;\s*)session_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
                 const requestOptions = {
                     method: 'POST',
@@ -330,7 +334,7 @@
                     })
                 };
                 // console.log(contextTokenList.tokens);
-                fetch('http://35.223.253.138:8000/getcode/turbo', requestOptions)
+                fetch('http://35.223.253.138:8000/getcode/completions', requestOptions)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
