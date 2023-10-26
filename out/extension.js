@@ -15,10 +15,46 @@ function getWebviewContent(filePath) {
     }
 }
 class MyWebviewViewProvider {
-    resolveWebviewView(webviewView, context, token) {
+    async resolveWebviewView(webviewView, context, token) {
         webviewView.webview.options = { enableScripts: true };
         // Create the initial content of the webview
         webviewView.webview.html = getWebviewContent("/dashboard.html");
+        // // Fetch the .gitignore content from the provided URL
+        // const url = 'https://www.toptal.com/developers/gitignore/api/data,audio,macos,dotenv,images,python,pycharm,database,visualstudio,jupyternotebooks,visualstudiocode,venv,intellij';
+        // let externalGitIgnore: string | null = null;
+        // try {
+        // 	const response = await axios.get<string>(url);
+        // 	externalGitIgnore = response.data;
+        // } catch (error) {
+        // 	console.error("Failed to fetch .gitignore content:", error);
+        // }
+        // // Indexing Logic
+        // const folderUri = vscode.workspace.workspaceFolders?.[0].uri;
+        // if (folderUri) {
+        // 	const gitIgnorePath = path.join(folderUri.fsPath, '.gitignore');
+        // 	let ig = ignore();
+        // 	if (fs.existsSync(gitIgnorePath)) {
+        // 		const gitIgnoreContent = fs.readFileSync(gitIgnorePath, 'utf-8');
+        // 		ig = ignore().add(gitIgnoreContent);
+        // 	}
+        // 	// Add the external .gitignore content
+        //     if (externalGitIgnore) {
+        // 		ig.add(externalGitIgnore);
+        // 	}
+        // 	const allFiles = await vscode.workspace.findFiles('**/*', '**/node_modules/**');
+        // 	const nonIgnoredFiles = allFiles.filter(file => {
+        // 		const relativePath = vscode.workspace.asRelativePath(file, false);
+        // 		return !ig.ignores(relativePath);
+        // 	});
+        // 	const contentList: string[] = [];
+        // 	for (const file of nonIgnoredFiles) {
+        //         const content = fs.readFileSync(file.fsPath, 'utf-8');
+        //         contentList.push(content);
+        //     }
+        // 	console.log("HAHA");
+        // 	console.log(contentList.slice(0, 10));
+        // 	console.log("NANAN");
+        // }
         // Listen for messages from the webview
         webviewView.webview.onDidReceiveMessage((message) => {
             if (message.command === 'sessionToken') {
