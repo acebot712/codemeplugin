@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/acebot712/codemeplugin.git"
   },
-  "version": "0.1.21",
+  "version": "0.1.25",
   "publisher": "CodeMe",
   "engines": {
     "vscode": "^1.77.0"
@@ -62,7 +62,6 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0",
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
@@ -76,13 +75,8 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@tensorflow/tfjs": "^4.11.0",
-    "@tensorflow/tfjs-node": "^4.11.0",
     "@types/glob": "^7.1.3",
     "@types/node": "^10.12.21",
-    "@types/node-fetch": "^2.6.6",
-    "axios": "^1.5.1",
-    "ignore": "^5.2.4",
-    "node-fetch": "^3.3.2"
+    "axios": "^1.4.0"
   }
 }
