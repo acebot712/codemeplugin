@@ -216,9 +216,6 @@
                 <div>
                     <!-- Hi <i>"#login_id#"</i>! -->
                     Hey there!
-                    <button id="sign-out-btn" class="btn">
-                        <i class="fas fa-sign-out-alt sign-out-icon"></i>
-                    </button>
                 </div>
                 <form>
                     <div class="form-wrapper">
@@ -380,6 +377,28 @@
             hljs.highlightAll();
         }
 
+        let sessionId; // global scope
+
+        async function initialize() {
+
+            sessionId = sessionStorage.getItem("session_id");
+
+            if (!sessionId) {
+                await fetch('http://34.41.150.118:8000/generateSession/',
+                    { method: 'POST', cache: "no-cache" })
+                    .then(async (response) => {
+                        if (response.ok) {
+                            const data = await response.json();
+                            sessionId = data["session_id"];
+                            sessionStorage.setItem("session_id", sessionId);
+                        }
+                    })
+                    .catch(error => console.error(error));
+            }
+        }
+
+        window.onload = initialize;
+
         function sendAPIRequest() {
             let apiRequest = JSON.stringify(document.getElementById("api-request").value);
             // Send a message to the extension requesting the highlighted text
@@ -398,11 +417,9 @@
             // Process the selected text further
             selectedTextPromise.then((selectedText) => {
                 apiRequest += selectedText;
-                // console.log(apiRequest);
-
                 responseDiv.innerHTML = 'Thinking of the best solution to your prompt...';
                 // responseDiv.innerHTML = 'Our servers are under maintenance. We apologize for the inconvenience. We will be back in a week to serve you soon :) ';
-                const session_token = document.cookie.replace(/(?:(?:^|.*;\s*)session_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+                console.log(sessionId);
                 const requestOptions = {
                     method: 'POST',
                     cache: "no-cache",
@@ -417,7 +434,7 @@
                     })
                 };
                 // console.log(contextTokenList.tokens);
-                fetch('http://34.41.150.118:8000/getcode/completions', requestOptions)
+                fetch(`http://34.41.150.118:8000/getagentcode/${sessionId}`, requestOptions)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
@@ -435,29 +452,9 @@
                     })
                     .catch(error => console.error(error));
             });
+
         }
 
-        // Function to handle the sign-out button click
-        document.getElementById("sign-out-btn").addEventListener("click", function () {
-            // Make a fetch request to the server-side API
-            fetch('http://35.223.253.138:3000/api/sign-out', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 'user_id': '"#user_id#"', 'login_id': '"#login_id#"' })
-            })
-                .then(function (data) {
-                    vscode.postMessage({ command: 'signOut' });
-
-                    // Remove the token from globalState
-                    vscode.setState({ token: undefined });
-                })
-                .catch(function (error) {
-                    // Display an error message
-                    console.log(error.message);
-                });
-        });
     </script>
 
 </body>
