@@ -29,7 +29,6 @@
 
         .switch {
             position: relative;
-            display: inline-block;
             width: 50px;
             height: 24px;
             float: right;
@@ -226,7 +225,17 @@
                                 <p>
                                     On-premise
                                     <label class="switch">
-                                        <input type="checkbox">
+                                        <input type="checkbox" id="onPremiseCheckbox">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </p>
+                            </div>
+                            <!-- Rounded switch -->
+                            <div class="switch-container">
+                                <p>
+                                    Deep-scan codebase (slower)
+                                    <label class="switch">
+                                        <input type="checkbox" id="deepScanCheckbox">
                                         <span class="slider round"></span>
                                     </label>
                                 </p>
@@ -398,28 +407,35 @@
         }
 
         window.onload = initialize;
-
+        
         function sendAPIRequest() {
+            let onPremise = document.getElementById("onPremiseCheckbox").checked;
+            let deepScan = document.getElementById("deepScanCheckbox").checked;
+            let deepScanText = "";
+
+            if (deepScan) {
+                vscode.postMessage({ command: 'deepScan' });
+            }
             let apiRequest = JSON.stringify(document.getElementById("api-request").value);
-            // Send a message to the extension requesting the highlighted text
             vscode.postMessage({ command: 'getHighlightedText' });
 
             let selectedTextPromise = new Promise((resolve) => {
-                // Message handler to receive selected text from the extension
                 window.addEventListener('message', (event) => {
                     let message = event.data;
                     if (message.command === 'highlightedText') {
                         resolve(message.text);
                     }
+                    if (message.command === 'deepScanText') {
+                        deepScanText = message.text; // Update deepScanText
+                        // console.log("Received deep scan text: ", deepScanText);
+                    }
                 });
             });
 
-            // Process the selected text further
             selectedTextPromise.then((selectedText) => {
                 apiRequest += selectedText;
                 responseDiv.innerHTML = 'Thinking of the best solution to your prompt...';
-                // responseDiv.innerHTML = 'Our servers are under maintenance. We apologize for the inconvenience. We will be back in a week to serve you soon :) ';
-                console.log(sessionId);
+
                 const requestOptions = {
                     method: 'POST',
                     cache: "no-cache",
@@ -430,7 +446,10 @@
                         'prompt': apiRequest,
                         'context': "Chat Context History: " + contextTokenList.tokens,
                         'user_id': '"#user_id#"',
-                        'login_id': '"#login_id#"'
+                        'login_id': '"#login_id#"',
+                        'onPremise': onPremise,
+                        'deepScan': deepScan,
+                        ...(deepScan && { 'deepScanText': deepScanText }) // Conditionally add deepScanText
                     })
                 };
                 // console.log(contextTokenList.tokens);
